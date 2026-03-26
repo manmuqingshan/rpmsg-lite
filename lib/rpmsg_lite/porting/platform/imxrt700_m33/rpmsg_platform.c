@@ -806,13 +806,6 @@ int32_t platform_init(void)
     mcmgr_status_t retval = kStatus_MCMGR_Error;
     retval                = MCMGR_RegisterEvent(kMCMGR_RemoteRPMsgEvent, mcmgr_event_handler, ((void *)0));
 
-#if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
-     defined(MIMXRT798S_cm33_core0_SERIES))
-    retval = MCMGR_RegisterEvent(kMCMGR_RemoteRPMsgEvent, mcmgr_event_handler, ((void *)0));
-#elif (defined(MIMXRT735S_cm33_core1_SERIES) || defined(MIMXRT758S_cm33_core1_SERIES) || \
-       defined(MIMXRT798S_cm33_core1_SERIES))
-
-#endif
     if (kStatus_MCMGR_Success != retval)
     {
         return -1;
@@ -872,6 +865,7 @@ int32_t platform_init(void)
  */
 int32_t platform_deinit(void)
 {
+#if !(defined(RL_USE_MCMGR_IPC_ISR_HANDLER) && (RL_USE_MCMGR_IPC_ISR_HANDLER == 1))
 #if (defined(MIMXRT735S_cm33_core0_SERIES) || defined(MIMXRT758S_cm33_core0_SERIES) || \
      defined(MIMXRT798S_cm33_core0_SERIES))
     MU_Deinit(APP_M33_0_M33_1_MU);
@@ -882,6 +876,7 @@ int32_t platform_deinit(void)
     MU_Deinit(APP_M33_1_M33_0_MU);
     MU_Deinit(APP_M33_1_HIFI1_MU);
     MU_Deinit(APP_M33_1_HIFI4_MU);
+#endif
 #endif
 
     /* Delete lock used in multi-instanced RPMsg */
